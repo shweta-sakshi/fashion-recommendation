@@ -39,7 +39,7 @@ const analyseFashion = async (prefer) => {
                 User Preference:                     
                 -Gender: ${prefer.gender ? prefer.gender : "not mentioned"},
                 -Body shape:${prefer.bodyshape ? prefer.bodyshape : "not mentioned"},
-                -Face shape:${prefer.faceshape? prefer.faceshape: "not mentioned"}
+                -Face shape:${prefer.faceshape ? prefer.faceshape : "not mentioned"}
                 -Top: ${prefer.topwear ? prefer.topwear : "not mentioned"},   
                 -Bottom: ${prefer.bottomwear ? prefer.bottomwear : "not mentioned"},
                 -Footware: ${prefer.footware ? prefer.footware : "not mentioned"},
@@ -69,4 +69,4 @@ const analyseFashion = async (prefer) => {
     }
 }
 
-export default analyseTicket
+export default analyseFashion

@@ -1,4 +1,4 @@
-import Measurement from "../models/measurement";
+import Measurement from "../models/measurement.js";
 
 export const createmeasurement = async (req, res) => {
   const { faceshape, gender, bodyshape, skintonecolor, region, weather } = req.body;
@@ -52,6 +52,6 @@ export const getmeasurement = async (req, res) => {
     res.status(200).json({ data: measurement, message: "successfully get measurment information." })
 
   } catch (error) {
-    res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message })
   }
 }
