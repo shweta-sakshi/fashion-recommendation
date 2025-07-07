@@ -9,16 +9,16 @@ const Dashboard = () => {
     ));
 
     const handleGenerate = () => {
-        
+
     }
 
     return (
-        <div className="p-4 flex flex-col justify-center">
-            <div className="flex flex-col justify-center items-cente p-20 w-screen">
+        <div className="p-4 flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center p-20 w-screen">
                 <Textarea className="" />
-                <div className="tooltip flex flex-col justify-center items-center p-12 group">
+                <div className="tooltip flex flex-col justify-center items-center p-1 group w-40 rounded-2xl  h-10 m-15">
                     <div className="tooltip-content">
-                        <div className="opacity-0 group-hover:opacity-100 animate-bounce text-blue-400 border-2 rounded-3xl p-1 -rotate-10 text-xl font-black">Wow!</div>
+                        <div className="opacity-0 group-hover:opacity-100 animate-bounce text-blue-400 border-2 rounded-3xl p-1 -rotate-9 text-xl font-black">Go ahead!</div>
                     </div>
                     <button onClick={handleGenerate} className="btn border-b-1 border-b-white rounded-4xl bg-blue-900 shadow-blue-700 shadow-md hover:bg-blue-950 bg-gradient-to-r text-white  p-4">Generate Style</button>
                 </div>
