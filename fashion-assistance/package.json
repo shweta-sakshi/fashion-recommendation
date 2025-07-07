@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "style suggestions",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
     "inngest-dev": "npx inngest-cli@latest dev"

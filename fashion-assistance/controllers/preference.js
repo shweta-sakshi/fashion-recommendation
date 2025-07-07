@@ -1,6 +1,5 @@
 
-import Preference from '../models/preference.js'
-
+import Preference from '../models/preference'
 export const createpreference = async (req, res) => {
     const { hairstyle, jewels, topwear, bottomwear, footwear, handbag } = req.body;
 
@@ -13,9 +12,9 @@ export const createpreference = async (req, res) => {
 
     try {
         await Preference.create(preference)
-        return res.status(200).json({success:true, message: "preference saved" })
+        return res.status(200).json({ message: "preference saved" })
     } catch (error) {
-        return res.status(500).json({success:false, message: error.message })
+        return res.status(500).json({ message: error.message })
     }
 
 }

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const preferenceSchema = new mongoose.Schema({
+const preferenceSchema = new mongeese.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     hairstyle: { type: String, default: "any" },
     jewels: { type: String, default: "no jewels" },
