@@ -69,4 +69,4 @@ const analyseFashion = async (prefer) => {
     }
 }
 
-export default analyseTicket
+export default analyseFashion

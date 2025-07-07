@@ -34,21 +34,21 @@ export const login = async (req, res) => {
 
     try {
         const user = await User.findOne({ email })
-        if (!user) return res.status(401).json({ error: "user not found" })
+
+        if (!user) return res.status(401).json({ message: "user not found" })
 
         bcrypt.compare(password, user.password, (err, same) => {
             if (err) {
                 console.log("Compare Error ", err.message);
             }
-            if (!same) return res.status(401).json({ error: "Invailid credentials" })
+            if (!same) return res.status(401).json({ message: "Invailid credentials" })
+            const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET)
+            res.json({ user, token })
         })
-
-        const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET)
-        res.json({ user, token })
 
     } catch (error) {
         console.log("login Error", error.message);
-        res.status(500).json({ error: "Login failed", details: error.message })
+        res.status(500).json({ error: "Login failed", message: error.message })
 
     }
 }
