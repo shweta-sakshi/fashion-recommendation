@@ -6,6 +6,18 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 import { Input } from "@/components/ui/input"
 
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
@@ -14,6 +26,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import axios from "axios";
 import { toast } from "sonner";
+import FaceAnalysisStudio from "@/components/Skintone";
 
 const formSchema = z.object({
     faceshape: z.string().min(),
@@ -40,7 +53,19 @@ export function Measurement() {
 
     const onSubmit = async (data) => {
         const token = localStorage.getItem('token')
+        const tone = localStorage.getItem('skintone')
+
+        if (!tone) {
+            toast.error("Try again", {
+                description: "set your skintone",
+            })
+            return
+        }
+        data.skintonecolor = tone
+
         try {
+            console.log(data);
+
             const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/measurement/create`, data, {
                 headers: {
                     authorization: token
@@ -55,7 +80,7 @@ export function Measurement() {
                     description: response.data.message,
                 })
 
-        } catch (error) {
+        } catch (e) {
             console.error("Error saving your menasurement details", e);
 
             const axiosError = e;
@@ -63,6 +88,8 @@ export function Measurement() {
                 axiosError.response?.data.message ||
                 "An error occurred while saving your measurement details";
             toast.error("process failed", { description: errorMessage });
+        } finally {
+            localStorage.removeItem('skintone')
         }
     }
 
@@ -145,14 +172,7 @@ export function Measurement() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-base lg:text-lg">skintonecolor</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter your skintonecolor"
-                                                    {...field}
-                                                    className="w-full h-12 lg:h-14 text-base lg:text-lg"
-                                                    required
-                                                />
-                                            </FormControl>
+                                            <AlertDialogForSkinToneDetection {...field} />
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -213,4 +233,27 @@ export function Measurement() {
             </div>
         </>
     );
+}
+
+
+const AlertDialogForSkinToneDetection = () => {
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <button variant="outline" className="border-1 p-2 w-40">Analyse</button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        <FaceAnalysisStudio />
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    )
 }

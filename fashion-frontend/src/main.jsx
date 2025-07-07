@@ -15,13 +15,25 @@ import Dashboard from './pages/Dashboard'
 import { Measurement } from './pages/Measurement'
 import CheckAuth from '@/components/auth'
 import Layout from '@/Layout'
- 
+import FaceAnalysisStudio from './components/Skintone'
+import ImagesOfStyle from './pages/ImagesOfStyle'
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<Layout />}>
       <Route path='' element={
         <CheckAuth protectedRoute={false}>
           <Landing />
+        </CheckAuth>} />
+
+      <Route path='face' element={
+        <CheckAuth protectedRoute={true}>
+          <FaceAnalysisStudio />
+        </CheckAuth>} />
+
+      <Route path='images' element={
+        <CheckAuth protectedRoute={true}>
+          <ImagesOfStyle />
         </CheckAuth>} />
 
       <Route path='dashboard' element={

@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 import cors from "cors"
 import { serve } from "inngest/express"
 import userRoutes from "./routes/user.js"
-import {inngest} from "./inngest/client.js"
+import { inngest } from "./inngest/client.js"
 import { onUserSignUp } from "./inngest/functions/on-signup.js"
 import { styleSuggestion } from './inngest/functions/style-suggestion.js'
 import preferenceRoutes from './routes/preference.js'
@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use("/api/auth", userRoutes);
 app.use("/api/preference", preferenceRoutes);
-app.use("/api/measurements", measurementRoutes);
+app.use("/api/measurement", measurementRoutes);
 
 app.use("/api/inngest", serve({
     client: inngest,
@@ -28,9 +28,9 @@ app.use("/api/inngest", serve({
 }))
 
 mongoose
-.connect(process.env.DB)
-.then(()=>{
-    console.log("mongoose connected ✅");
-    app.listen(port, ()=> console.log("🚀 server listening at port ", port));
-})
-.catch((err) => console.error("❌mongodb Error: ", err));
+    .connect(process.env.DB)
+    .then(() => {
+        console.log("mongoose connected ✅");
+        app.listen(port, () => console.log("🚀 server listening at port ", port));
+    })
+    .catch((err) => console.error("❌mongodb Error: ", err));
