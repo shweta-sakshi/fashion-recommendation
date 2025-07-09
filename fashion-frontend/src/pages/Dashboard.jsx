@@ -1,26 +1,135 @@
 import { Textarea } from "@/components/ui/textarea"
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
-import React from 'react'
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { toast } from "sonner";
+import axios from "axios";
+
+const formSchema = z.object({
+    description: z.string()
+})
 
 const Dashboard = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useNavigate();
+
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            description: ""
+        },
+    })
+
+    const onSubmit = async (data) => {
+        setIsSubmitting(true);
+
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/ai/generatestyle`, data, {
+                headers: {
+                    authorization: `${localStorage.getItem("token")}`
+                }
+            });
+
+            console.log("Response from style generating API: ", response);
+
+            response.data.success === true
+                ? toast.success("style generated", {
+                    description: response.data.message,
+                })
+                : toast.error("fail to generate", {
+                    description: response.data.message,
+                });
+
+
+            //array of ai response
+            const organisedResponse = [
+                response.data.details.summary,
+                response.data.details.helpfulNotes,
+                response.data.details.relatedStyles
+            ]
+
+            console.log("Organised Response 2: ", organisedResponse);
+
+            localStorage.setItem("fashion", organisedResponse);
+
+            router(`/outfitlist`);
+            setIsSubmitting(false);
+        } catch (e) {
+            console.error("Error generating style", e.message);
+
+            const axiosError = e;
+            const errorMessage =
+                axiosError.response?.data.message ||
+                "An error occurred while generating style";
+            toast.error("style generation failed", { description: errorMessage });
+
+            setIsSubmitting(false);
+        }
+    }
 
     const cards = data.map((card, index) => (
         <Card key={card.src} card={card} index={index} />
     ));
 
-    const handleGenerate = () => {
-
-    }
-
     return (
         <div className="p-4 flex flex-col justify-center items-center">
-            <div className="flex flex-col justify-center items-center p-20 w-screen">
-                <Textarea className="" />
-                <div className="tooltip flex flex-col justify-center items-center p-1 group w-40 rounded-2xl  h-10 m-15">
-                    <div className="tooltip-content">
-                        <div className="opacity-0 group-hover:opacity-100 animate-bounce text-blue-400 border-2 rounded-3xl p-1 -rotate-9 text-xl font-black">Go ahead!</div>
-                    </div>
-                    <button onClick={handleGenerate} className="btn border-b-1 border-b-white rounded-4xl bg-blue-900 shadow-blue-700 shadow-md hover:bg-blue-950 bg-gradient-to-r text-white  p-4">Generate Style</button>
+            <div className="flex flex-col justify-center items-center p-20 w-full">
+                <div className="max-w-3xl w-full rounded-3xl p-8 lg:p-14">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 lg:space-y-8 ">
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-base lg:text-lg">Describe your style in mind</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Enter your description about style"
+                                                {...field}
+                                                className="w-full h-12 lg:h-14 text-base lg:text-lg"
+                                                required
+                                                autoFocus
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className="pt-4 flex justify-center">
+                                <HoverBorderGradient
+                                    containerClassName="rounded-full w-50"
+                                    as="button"
+                                    type="submit"
+                                    className="dark:bg-black dark:hover:bg-purple-950 bg-white text-black dark:text-white flex items-center justify-center space-x-2 w-full"
+                                >
+                                    <span className="flex flex-row items-center">
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="mr-3 h-5 w-5 animate-spin" /> Generatin...
+                                            </>
+                                        ) : (
+                                            "Generate Style"
+                                        )}
+                                    </span>
+                                </HoverBorderGradient>
+                            </div>
+                        </form>
+                    </Form>
                 </div>
             </div>
             <div className="w-full h-full py-20">

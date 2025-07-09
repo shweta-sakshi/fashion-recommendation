@@ -2,12 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
-
-import { Navbar } from './components/Navbar'
 import { Landing } from './pages/Landing'
 import { Login } from './pages/Login'
 import { SignUp } from './pages/SignUp'
-import { StyleList } from './pages/Stylelist'
+import { Outfitlist } from './pages/Outfitlist'
 import { Preference } from './pages/Preference'
 import Home from './pages/Examples'
 import Dashboard from './pages/Dashboard'
@@ -29,6 +27,11 @@ const router = createBrowserRouter(
       <Route path='face' element={
         <CheckAuth protectedRoute={true}>
           <FaceAnalysisStudio />
+        </CheckAuth>} />
+
+      <Route path='outfitlist' element={
+        <CheckAuth protectedRoute={true}>
+          <Outfitlist />
         </CheckAuth>} />
 
       <Route path='images' element={
