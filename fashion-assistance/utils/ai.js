@@ -54,8 +54,6 @@ const analyseFashion = async (prefer) => {
         response.output[0].text ||
         response.output[0];
 
-    console.log(raw);
-
 
     try {
         const match = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
