@@ -1,4 +1,5 @@
 import { inngest } from "../inngest/client.js";
+import Stylemapping from "../models/imagestylemapping.js";
 import Measurement from "../models/measurement.js"
 import Preference from "../models/preference.js"
 import Generatedstyle from "../models/savegeneratedstyle.js";
@@ -47,7 +48,7 @@ export const generatestyle = async (req, res) => {
 export const getgeneratedstyle = async (req, res) => {
     try {
         const generatedstyles = await Generatedstyle.findOne({ userId: req.user._id });
-        
+
         if (!generatedstyles) {
             return res.status(404).json({
                 success: false,
@@ -70,5 +71,21 @@ export const getgeneratedstyle = async (req, res) => {
             error: error.message
         });
 
+    }
+}
+
+export const getimagestylemapping = async (req, res) => {
+    try {
+        const generatedstylesimage = await Stylemapping.findOne({ userId: req.user._id });
+
+        if (!generatedstylesimage) {
+            return res.status(404).json({ success: false, message: "No generated image found yet, wait a little bit" });
+        }
+
+        return res.status(200).json({ success: true, message: "Generated style fetched successfully", data: generatedstylesimage.image });
+
+    } catch (error) {
+        console.error("Error fetching generated style:", error);
+        return { success: false, message: error.message };
     }
 }
