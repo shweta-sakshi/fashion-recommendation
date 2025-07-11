@@ -1,5 +1,6 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import * as fs from "node:fs";
+import { uploadBase64ImageWithCallback } from "../utils/uploadImagesToImageKit.js";
 
 export default async function main(style, modelstructure) {
 
@@ -37,24 +38,25 @@ export default async function main(style, modelstructure) {
             } else if (part.inlineData) {
                 const imageData = part.inlineData.data;
                 base64Image = imageData.toString("base64");
-
-                // Save the image file
-                const buffer = Buffer.from(imageData, "base64");
-                fs.writeFileSync("gemini-native-image.png", buffer);
-
                 break;
             }
         }
     } else {
-        console.error("Unexpected response structure");
         return { success: false, imagedata: "", message: "Unexpected response structure" };
     }
 
     if (base64Image) {
-        console.log("Image generated successfully");
-        return { success: true, imagedata: base64Image, message: "Image generated successfully" };
+        const fileName = `generated-image-${Date.now()}.jpg`;
+
+        try {
+            const result = await uploadBase64ImageWithCallback(base64Image, fileName)
+            return { success: true, imagedata: result.data.url, message: "Image generated and uploaded successfully" }
+
+        } catch (error) {
+            return { success: false, imagedata: "", message: "Error uploading image: " + error.message };
+        }
+
     } else {
-        console.error("No image data found in response");
         return { success: false, imagedata: "", message: "No image data found in response" };
     }
 }

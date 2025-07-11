@@ -11,7 +11,7 @@ export const styleSuggestion = inngest.createFunction(
         try {
             const prefer = event.data
 
-            const aiResponse = await step.run('generate-style', () => analyseFashion(prefer))
+            const aiResponse = await analyseFashion(prefer)
 
             if (!aiResponse) {
                 console.error("❌ No response from AI service")
@@ -36,26 +36,24 @@ export const styleSuggestion = inngest.createFunction(
             }
 
             //generate image for the style
-            const imagebase64data = await step.run("generate-image", async () => {
+            const imagebase64dataurl = await step.run("generate-image", async () => {
                 const imagebase64data = [];
                 for (const style of organisedResponse.relatedStyles) {
                     const imageResponse = await generateImage(style, modelstructure);
 
                     if (imageResponse.success) {
-                        imagebase64data.push(imageResponse.imagedata.toString("base64"));
+                        imagebase64data.push(imageResponse.imagedata);
+
                     } else {
-                        console.error("❌ Failed to generate image for style", style, imageResponse.message);
+                        console.error("❌ Failed to generate image for style", imageResponse.message);
                     }
                 }
                 return imagebase64data;
             })
 
-            console.log(imagebase64data);
-
-
             //save image of style
             await step.run("save-style-image", async () => {
-                const response = await saveimageofstyle(imagebase64data, organisedResponse.userId)
+                const response = await saveimageofstyle(imagebase64dataurl, organisedResponse.userId)
 
                 if (!response.success) {
                     console.error("❌ Failed to save style image", response.message);
