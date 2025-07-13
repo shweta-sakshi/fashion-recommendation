@@ -3,13 +3,15 @@ import Stylemapping from "../models/imagestylemapping.js";
 export const saveimageofstyle = async(imagestring, userId) => {
     try {
 
-        await Stylemapping.create({
+        await Stylemapping.findOneAndUpdate({userId}, {
             userId: userId,
             image: imagestring,
             createdAt: new Date()
+        },{
+            upsert: true,
+            new: true,
+            runValidators: true
         });
-
-        console.log("done");
         
         return { success: true, message: "Image saved successfully" };
 
