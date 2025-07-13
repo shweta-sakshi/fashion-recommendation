@@ -3,6 +3,7 @@ import analyseFashion from "../../utils/ai.js";
 import savegeneratedstyle from "../../utils/savegeneratedstyle.js";
 import generateImage from "../../utils/textToImage.js";
 import { saveimageofstyle } from "../../utils/savegenerateimage.js";
+import { deleteGeneratedImage } from "../../utils/deletegenerateimage.js";
 
 export const styleSuggestion = inngest.createFunction(
     { id: "on-style-suggestion", retries: 2 },
@@ -35,6 +36,13 @@ export const styleSuggestion = inngest.createFunction(
                 gender: prefer.gender || "according to dress style",
             }
 
+            // Delete any previously generated image mapping for the user
+            await step.run("delete-previous-images", async () => {
+                const deleteResponse = await deleteGeneratedImage(prefer.userId)
+                console.log("Delete response:", deleteResponse);
+                return deleteResponse;
+            })
+
             //generate image for the style
             const imagebase64dataurl = await step.run("generate-image", async () => {
                 const imagebase64data = [];
@@ -51,26 +59,17 @@ export const styleSuggestion = inngest.createFunction(
                 return imagebase64data;
             })
 
-            //save image of style
+            //save image of style.
             await step.run("save-style-image", async () => {
                 const response = await saveimageofstyle(imagebase64dataurl, organisedResponse.userId)
-
+                console.log("Image save response:", response);
+                
                 if (!response.success) {
                     console.error("❌ Failed to save style image", response.message);
                     return { success: false, message: "Failed to save style image" };
                 }
 
             })
-
-
-            //send mail upon assiging ticket
-            // await step.run("send-email-notification", async () => {
-            //     await SendMail(
-            //         email,
-            //         "Fashion Generated",
-            //         `fashion generated for you, please check your dashboard`
-            //     )
-            // })
 
             return { success: true, data: organisedResponse, message: "Fashion style suggestion generated successfully" }
 

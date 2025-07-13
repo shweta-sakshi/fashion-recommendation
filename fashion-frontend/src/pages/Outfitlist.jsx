@@ -1,16 +1,60 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect"
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2, RefreshCw } from 'lucide-react'
 import axios from 'axios'
 
 export const Outfitlist = () => {
   const [outfitList, setOutfitList] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [imageStyleMapping, setImageStyleMapping] = useState(null)
+  const [imageStyleMapping, setImageStyleMapping] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [imageLoadingStates, setImageLoadingStates] = useState({})
+  const [isPolling, setIsPolling] = useState(false)
 
+  // Fetch images with individual loading states - Version 2 with setTimeout approach
+  const fetchImageStyleMapping = useCallback(async (showPollingIndicator = false) => {
+    try {
+      if (showPollingIndicator) setIsPolling(true)
+
+      const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/ai/getgeneratedimage`, {
+        headers: {
+          authorization: `${localStorage.getItem("token")}`
+        }
+      })
+
+      if (response.data.success === true) {
+        const newImageMapping = response.data.data || {}
+
+        // First update the image mapping
+        setImageStyleMapping(prevMapping => {
+          const updatedMapping = { ...prevMapping, ...newImageMapping }
+
+          // Then update loading states based on what changed
+          setTimeout(() => {
+            setImageLoadingStates(prevStates => {
+              const newStates = { ...prevStates }
+              Object.keys(newImageMapping).forEach(index => {
+                if (newImageMapping[index] && newImageMapping[index] !== prevMapping[index]) {
+                  newStates[index] = false // Image loaded
+                }
+              })
+              return newStates
+            })
+          }, 0)
+
+          return updatedMapping
+        })
+      }
+    } catch (error) {
+      console.log("Error fetching image style mapping:", error);
+    } finally {
+      if (showPollingIndicator) setIsPolling(false)
+    }
+  }, [])
+
+  // Initial data fetch
   useEffect(() => {
     const fetchOutfitList = async () => {
       try {
@@ -23,6 +67,15 @@ export const Outfitlist = () => {
 
         if (response.data.success === true) {
           setOutfitList(response.data.data)
+
+          // Initialize loading states for all images
+          const initialLoadingStates = {}
+          if (response.data.data?.relatedStyles) {
+            response.data.data.relatedStyles.forEach((_, index) => {
+              initialLoadingStates[index] = true // All images start as loading
+            })
+          }
+          setImageLoadingStates(initialLoadingStates)
         } else {
           setError("Failed to fetch outfit list")
         }
@@ -33,30 +86,30 @@ export const Outfitlist = () => {
       }
     }
 
-    const fetchImageStyleMapping = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/ai/getgeneratedimage`, {
-          headers: {
-            authorization: `${localStorage.getItem("token")}`
-          }
-        })
-
-        if (response.data.success === true) {
-          console.log("Image style mapping fetched successfully:", response);
-          setImageStyleMapping(response.data.data)
-        } else {
-          setError("Failed to fetch image style mapping")
-        }
-      } catch (error) {
-        setError("Error fetching image style mapping")
-      }
-    }
-
-    fetchImageStyleMapping()
     fetchOutfitList()
-    console.log("Outfit list fetched successfully:", outfitList);
-
   }, [])
+
+  // Fetch images after outfit list is loaded
+  useEffect(() => {
+    if (outfitList) {
+      fetchImageStyleMapping()
+    }
+  }, [outfitList, fetchImageStyleMapping])
+
+  // Polling for new images every 10 seconds if there are still loading images
+  useEffect(() => {
+    if (!outfitList?.relatedStyles?.length) return
+
+    const hasLoadingImages = Object.values(imageLoadingStates).some(isLoading => isLoading)
+
+    if (hasLoadingImages) {
+      const pollInterval = setInterval(() => {
+        fetchImageStyleMapping(true)
+      }, 10000) // Poll every 10 seconds
+
+      return () => clearInterval(pollInterval)
+    }
+  }, [imageLoadingStates, outfitList, fetchImageStyleMapping])
 
   // Auto-play functionality - Fixed to check if data exists
   useEffect(() => {
@@ -89,6 +142,10 @@ export const Outfitlist = () => {
     setCurrentIndex(index);
   };
 
+  const handleRefreshImages = () => {
+    fetchImageStyleMapping(true)
+  }
+
   if (loading) {
     return (
       <div className='flex items-center justify-center min-h-screen'>
@@ -99,9 +156,9 @@ export const Outfitlist = () => {
 
   if (error) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
+      <div className='flex flex-col items-center justify-center min-h-screen'>
         <div className="text-red-500 text-xl">{error}</div>
-        <div className="text-white-500 text-xl">Reload after some time...</div>
+        <div className="text-yellow-500 text-xl">Reload after some time...</div>
       </div>
     )
   }
@@ -116,6 +173,8 @@ export const Outfitlist = () => {
 
   // Safe access to current style
   const currentStyle = outfitList?.relatedStyles?.[currentIndex];
+  const currentImageUrl = imageStyleMapping[currentIndex];
+  const isCurrentImageLoading = imageLoadingStates[currentIndex];
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-8 max-w-4xl mx-auto'>
@@ -132,7 +191,17 @@ export const Outfitlist = () => {
       {/* Related Styles Section */}
       {outfitList.relatedStyles && outfitList.relatedStyles.length > 0 && (
         <div className="w-full">
-          <div className="text-center text-amber-500 text-3xl font-bold mb-8">Outfit Recommendations</div>
+          <div className="text-center text-amber-500 text-3xl font-bold mb-8 flex items-center justify-center gap-4">
+            Outfit Recommendations
+            {isPolling && <Loader2 className="w-6 h-6 text-amber-500 animate-spin" />}
+            <button
+              onClick={handleRefreshImages}
+              className="text-sm bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-full transition-colors"
+              disabled={isPolling}
+            >
+              <RefreshCw className={`w-4 h-4 ${isPolling ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
 
           <div className="w-full max-w-7xl mx-auto p-6">
             <div
@@ -149,6 +218,11 @@ export const Outfitlist = () => {
                     <h3 className="text-xl font-bold">
                       Style Option {currentIndex + 1}
                     </h3>
+                    {isCurrentImageLoading && (
+                      <p className="text-sm mt-2 opacity-90">
+                        🎨 Image generating...
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex-1 space-y-4 overflow-y-auto">
@@ -176,17 +250,33 @@ export const Outfitlist = () => {
                 {/* Right Column - Primary Image (2/3 width) */}
                 <div className="w-2/3 bg-gradient-to-br from-amber-100 to-orange-100 relative overflow-hidden flex items-center justify-center">
                   <div className="w-full h-full flex items-center justify-center p-4">
-                    <img
-                      src={`${imageStyleMapping[currentIndex]}`}
-                      alt={`Outfit style ${currentIndex + 1}`}
-                      className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        width: 'auto',
-                        height: 'auto'
-                      }}
-                    />
+                    {currentImageUrl && !isCurrentImageLoading ? (
+                      <img
+                        src={currentImageUrl}
+                        alt={`Outfit style ${currentIndex + 1}`}
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                        onLoad={() => {
+                          setImageLoadingStates(prev => ({
+                            ...prev,
+                            [currentIndex]: false
+                          }))
+                        }}
+                        onError={() => {
+                          setImageLoadingStates(prev => ({
+                            ...prev,
+                            [currentIndex]: true
+                          }))
+                        }}
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-amber-600 space-y-4">
+                        <Loader2 className="w-16 h-16 animate-spin" />
+                        <div className="text-center">
+                          <p className="text-lg font-semibold">Generating outfit image...</p>
+                          <p className="text-sm opacity-75">This may take a few moments</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -206,17 +296,21 @@ export const Outfitlist = () => {
                 <ChevronRight className="w-6 h-6 text-gray-700" />
               </button>
 
-              {/* Dots indicator */}
+              {/* Dots indicator with loading states */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
                 {outfitList.relatedStyles.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => goToSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
+                    className={`w-3 h-3 rounded-full transition-all duration-300 relative ${index === currentIndex
                       ? 'bg-amber-500 scale-125'
                       : 'bg-white bg-opacity-70 hover:bg-opacity-90'
                       }`}
-                  />
+                  >
+                    {imageLoadingStates[index] && (
+                      <div className="absolute inset-0 rounded-full border-2 border-amber-400 animate-ping"></div>
+                    )}
+                  </button>
                 ))}
               </div>
             </div>
@@ -229,9 +323,14 @@ export const Outfitlist = () => {
               />
             </div>
 
-            {/* Style counter */}
+            {/* Style counter with loading info */}
             <div className="text-center mt-4 text-gray-600">
               <span className="text-amber-600 font-semibold">{currentIndex + 1}</span> of {outfitList.relatedStyles.length} styles
+              {Object.values(imageLoadingStates).some(loading => loading) && (
+                <span className="ml-4 text-sm text-amber-600">
+                  ({Object.values(imageLoadingStates).filter(loading => !loading).length} images ready)
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -255,5 +354,4 @@ export const Outfitlist = () => {
       )}
     </div>
   )
-
 }

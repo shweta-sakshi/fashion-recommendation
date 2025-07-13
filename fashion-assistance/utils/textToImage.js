@@ -1,5 +1,4 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import * as fs from "node:fs";
 import { uploadBase64ImageWithCallback } from "../utils/uploadImagesToImageKit.js";
 
 export default async function main(style, modelstructure) {
@@ -12,11 +11,13 @@ export default async function main(style, modelstructure) {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const contents =
-        `generate full image of A model with the following attributes:
-    gender: ${modelstructure.gender},
-    Body Shape: ${modelstructure.bodysape}, face Shape: ${modelstructure.facesape},
-    Skin Tone Color: ${modelstructure.skintonecolor} who is wearing ${styleinstring}.
-    The image should be realistic and suitable for fashion assistance. Give only the image without any text in response.`;
+        `Generate realistic full-body fashion model image:
+Gender: ${modelstructure.gender}
+Body: ${modelstructure.bodysape}
+Face: ${modelstructure.facesape}
+Skin: ${modelstructure.skintonecolor}
+Outfit: ${styleinstring}
+Head-to-toe view, no text.`;
 
     // Set responseModalities to include "Image" so the model can generate  an image
     const response = await ai.models.generateContent({

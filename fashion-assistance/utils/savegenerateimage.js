@@ -1,20 +1,16 @@
 import Stylemapping from "../models/imagestylemapping.js";
 
-export const saveimageofstyle = async (imagestring, userId) => {
+export const saveimageofstyle = async(imagestring, userId) => {
     try {
-        const existingstyleimagemapping = await Stylemapping.findOne({ userId: userId });
 
-        if (existingstyleimagemapping) {
-            existingstyleimagemapping.image = imagestring;
-            await existingstyleimagemapping.save();
-        } else {
-            const newStyleMapping = new Stylemapping({
-                userId: userId,
-                image: imagestring
-            });
-            await newStyleMapping.save();
-        }
+        await Stylemapping.create({
+            userId: userId,
+            image: imagestring,
+            createdAt: new Date()
+        });
 
+        console.log("done");
+        
         return { success: true, message: "Image saved successfully" };
 
     } catch (error) {
