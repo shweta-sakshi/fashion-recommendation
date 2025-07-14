@@ -3,7 +3,11 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export function Fliptext() {
-    const words = ["better", "modern", "beautiful", "awesome"];
+    const words = ["Discover your perfect style in seconds",
+        "AI-powered fashion that fits your vibe",
+        "Find clothes you'll actually love wearing",
+        "Your personal stylist, powered by AI",
+        "Stop guessing. Start styling."];
     return (
         <motion.h1
             initial={{
@@ -17,7 +21,7 @@ export function Fliptext() {
             )}
             layout>
             <div className="inline-block">
-                Make your websites look 10x <ContainerTextFlip words={words} />
+                <ContainerTextFlip words={words} />
                 {/* <Blips /> */}
             </div>
         </motion.h1>

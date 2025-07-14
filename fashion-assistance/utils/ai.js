@@ -62,7 +62,6 @@ const analyseFashion = async (prefer) => {
         return JSON.parse(jsonString)
 
     } catch (error) {
-        console.log("Failed to parse JSON from AI response" + error.message)
         return null
     }
 }

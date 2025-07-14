@@ -39,7 +39,6 @@ export const styleSuggestion = inngest.createFunction(
             // Delete any previously generated image mapping for the user
             await step.run("delete-previous-images", async () => {
                 const deleteResponse = await deleteGeneratedImage(prefer.userId)
-                console.log("Delete response:", deleteResponse);
                 return deleteResponse;
             })
 
@@ -62,7 +61,6 @@ export const styleSuggestion = inngest.createFunction(
             //save image of style.
             await step.run("save-style-image", async () => {
                 const response = await saveimageofstyle(imagebase64dataurl, organisedResponse.userId)
-                console.log("Image save response:", response);
                 
                 if (!response.success) {
                     console.error("❌ Failed to save style image", response.message);

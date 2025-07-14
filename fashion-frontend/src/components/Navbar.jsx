@@ -6,12 +6,24 @@ export function Navbar() {
     const navItems = [
         {
             name: "Home",
-            link: "/",
+            link: "/dashboard",
             icon: <IconHome className="h-4 w-4 text-neutral-500 dark:text-white" />,
         },
         {
-            name: "About",
-            link: "/about",
+            name: "Measurement",
+            link: "/measurement",
+            icon: <IconUser className="h-4 w-4 text-neutral-500 dark:text-white" />,
+        },
+        {
+            name: "Preference",
+            link: "/preference",
+            icon: (
+                <IconMessage className="h-4 w-4 text-neutral-500 dark:text-white" />
+            ),
+        },
+        {
+            name: "Outfit List",
+            link: "/outfitlist",
             icon: <IconUser className="h-4 w-4 text-neutral-500 dark:text-white" />,
         },
         {
@@ -22,6 +34,7 @@ export function Navbar() {
             ),
         },
     ];
+
     return (
         <div className="relative  w-full">
             <FloatingNav navItems={navItems} />

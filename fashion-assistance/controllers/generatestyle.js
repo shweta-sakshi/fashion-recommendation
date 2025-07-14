@@ -9,11 +9,10 @@ export const generatestyle = async (req, res) => {
 
     if (!description || description.trim() === "") {
         return res.status(400).json({
+            success: false,
             message: "Description is required"
         })
     }
-
-    console.log("Generating style with description:", description);
 
     try {
         const prompt = {};
@@ -29,17 +28,15 @@ export const generatestyle = async (req, res) => {
             data: prompt
         })
 
-        console.log("Detailed suggestion response:", detailedSuggestion);
-
-
         return res.status(201).json({
+            success: true,
             message: "Processing Started!!!",
             data: detailedSuggestion.data
         })
 
     } catch (error) {
-
         return res.status(500).json({
+            success: false,
             message: error.message
         })
     }

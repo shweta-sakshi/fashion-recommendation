@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 
@@ -36,6 +36,8 @@ export function SignUp() {
         },
     })
 
+    const router = useNavigate()
+
     const onSubmit = async (data) => {
         setIsSubmitting(true);
 
@@ -51,7 +53,7 @@ export function SignUp() {
                     description: response.data.message,
                 });
 
-            router.replace(`/login`);
+            router(`/login`);
             setIsSubmitting(false);
         } catch (e) {
             console.error("Error creating account", e);

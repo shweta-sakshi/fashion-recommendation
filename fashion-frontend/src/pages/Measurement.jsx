@@ -95,7 +95,7 @@ export function Measurement() {
 
     return (
         <>
-            <div className="col-span-1 row-span-5 flex justify-center items-center">
+            <div className="col-span-1 row-span-5 mt-23 flex justify-center items-center">
                 <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl p-11">
                     <div className="border-r-1 border-b-1 border-b-gray-300 border-r-gray-300 p-6 lg:p-8 xl:p-12 rounded-lg shadow-lg bg-white/5 backdrop-blur-xl">
                         <Form {...form}>
@@ -238,19 +238,17 @@ export function Measurement() {
 
 const AlertDialogForSkinToneDetection = () => {
     return (
-        <AlertDialog>
+        <AlertDialog className="mt-25">
             <AlertDialogTrigger asChild>
                 <button variant="outline" className="border-1 p-2 w-40">Analyse</button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="p-0 w-fit h-fit max-w-none border-0 bg-transparent shadow-none">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                         <FaceAnalysisStudio />
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction>Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

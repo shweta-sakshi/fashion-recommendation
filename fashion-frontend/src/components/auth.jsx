@@ -33,7 +33,7 @@ const CheckAuth = ({ children, protectedRoute }) => {
         <>
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 {children}
-                <Toaster />
+                <Toaster position="top-center" />
             </ThemeProvider>
         </>
     )

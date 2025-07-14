@@ -17,6 +17,10 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
+import Howitwork from "./Helppage/Howitwork";
+import BodyMeasurementGuide from "./Helppage/BodyMeasurementGuide";
+import FaceShapeGuide from "./Helppage/FaceShapeGuide";
+import Fashioninfo from "./Helppage/Fashioninfo";
 
 const formSchema = z.object({
     description: z.string()
@@ -42,8 +46,6 @@ const Dashboard = () => {
                     authorization: `${localStorage.getItem("token")}`
                 }
             });
-
-            console.log("Response from style generating API: ", response);
 
             response.data.success === true
                 ? toast.success("style generated", {
@@ -145,74 +147,30 @@ const Dashboard = () => {
 
 export default Dashboard
 
-
-const DummyContent = () => {
-    return (
-        <>
-            {[...new Array(3).fill(1)].map((_, index) => {
-                return (
-                    <div
-                        key={"dummy-content" + index}
-                        className="bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 rounded-3xl mb-4">
-                        <p
-                            className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl mx-auto">
-                            <span className="font-bold text-neutral-700 dark:text-neutral-200">
-                                The first rule of Apple club is that you boast about Apple club.
-                            </span>{" "}
-                            Keep a journal, quickly jot down a grocery list, and take amazing
-                            class notes. Want to convert those notes to text? No problem.
-                            Langotiya jeetu ka mara hua yaar is ready to capture every
-                            thought.
-                        </p>
-                        <img
-                            src="https://assets.aceternity.com/macbook.png"
-                            alt="Macbook mockup from Aceternity UI"
-                            height="500"
-                            width="500"
-                            className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain" />
-                    </div>
-                );
-            })}
-        </>
-    );
-};
-
 const data = [
     {
-        category: "Artificial Intelligence",
-        title: "You can do more with AI.",
-        src: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=3556&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        content: <DummyContent />,
+        category: "How it works",
+        title: "See what you have to do.",
+        src: "https://media.istockphoto.com/id/1133508700/photo/women-hand-using-smartphone-do-online-selling-for-people-shopping-online-in-black-friday-with.jpg?s=2048x2048&w=is&k=20&c=ZJ7jKr8TmsmVH4829E80pCGBDe2BLb7fUlrUXeLvtrs=",
+        content: <Howitwork />,
     },
     {
-        category: "Productivity",
-        title: "Enhance your productivity.",
-        src: "https://images.unsplash.com/photo-1531554694128-c4c6665f59c2?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        content: <DummyContent />,
+        category: "Body shape",
+        title: "Know your body shape",
+        src: "https://images.unsplash.com/photo-1675270444770-1a6d1f69aefc?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        content: <BodyMeasurementGuide />,
     },
     {
-        category: "Product",
-        title: "Launching the new Apple Vision Pro.",
-        src: "https://images.unsplash.com/photo-1713869791518-a770879e60dc?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        content: <DummyContent />,
+        category: "Face shape",
+        title: "Know your face shape",
+        src: "https://images.unsplash.com/photo-1727386245205-2112b722af99?q=80&w=712&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        content: <FaceShapeGuide />,
     },
 
     {
-        category: "Product",
-        title: "Maps for your iPhone 15 Pro Max.",
-        src: "https://images.unsplash.com/photo-1599202860130-f600f4948364?q=80&w=2515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        content: <DummyContent />,
-    },
-    {
-        category: "iOS",
-        title: "Photography just got better.",
-        src: "https://images.unsplash.com/photo-1602081957921-9137a5d6eaee?q=80&w=2793&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        content: <DummyContent />,
-    },
-    {
-        category: "Hiring",
-        title: "Hiring for a Staff Software Engineer",
-        src: "https://images.unsplash.com/photo-1511984804822-e16ba72f5848?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        content: <DummyContent />,
+        category: "Information",
+        title: "Know more about us",
+        src: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGFib3V0JTIwdXN8ZW58MHx8MHx8fDA%3D",
+        content: <Fashioninfo />,
     },
 ];

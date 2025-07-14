@@ -230,6 +230,7 @@ export const Card = ({
             </motion.button>
         </>
     );
+    
 };
 
 export const BlurImage = ({

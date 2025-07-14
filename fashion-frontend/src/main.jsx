@@ -7,14 +7,11 @@ import { Login } from './pages/Login'
 import { SignUp } from './pages/SignUp'
 import { Outfitlist } from './pages/Outfitlist'
 import { Preference } from './pages/Preference'
-import Home from './pages/Examples'
 import Dashboard from './pages/Dashboard'
-// import Layout from './layout'
 import { Measurement } from './pages/Measurement'
 import CheckAuth from '@/components/auth'
 import Layout from '@/Layout'
-import FaceAnalysisStudio from './components/Skintone'
-import ImagesOfStyle from './pages/ImagesOfStyle'
+import Contact from './pages/Contact'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,19 +21,14 @@ const router = createBrowserRouter(
           <Landing />
         </CheckAuth>} />
 
-      <Route path='face' element={
-        <CheckAuth protectedRoute={true}>
-          <FaceAnalysisStudio />
-        </CheckAuth>} />
-
       <Route path='outfitlist' element={
         <CheckAuth protectedRoute={true}>
           <Outfitlist />
         </CheckAuth>} />
 
-      <Route path='images' element={
+      <Route path='contact' element={
         <CheckAuth protectedRoute={true}>
-          <ImagesOfStyle />
+          <Contact />
         </CheckAuth>} />
 
       <Route path='dashboard' element={

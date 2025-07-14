@@ -177,7 +177,7 @@ export const Outfitlist = () => {
   const isCurrentImageLoading = imageLoadingStates[currentIndex];
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen p-8 max-w-4xl mx-auto'>
+    <div className='flex flex-col items-center justify-center min-h-screen p-5 mt-30 max-w-4xl mx-auto'>
       {/* Summary Section */}
       {outfitList.summary && (
         <div className="w-full mb-12">

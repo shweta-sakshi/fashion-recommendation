@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     motion,
     AnimatePresence,
@@ -7,6 +7,7 @@ import {
 } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export const FloatingNav = ({
@@ -15,24 +16,40 @@ export const FloatingNav = ({
 }) => {
     const { scrollYProgress } = useScroll();
 
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const router = useNavigate();
 
-    useMotionValueEvent(scrollYProgress, "change", (current) => {
-        // Check if current is not undefined and is a number
-        if (typeof current === "number") {
-            let direction = current - scrollYProgress.getPrevious();
+    // useMotionValueEvent(scrollYProgress, "change", (current) => {
+    //     // Check if current is not undefined and is a number
+    //     if (typeof current === "number") {
+    //         let direction = current - scrollYProgress.getPrevious();
 
-            if (scrollYProgress.get() < 0.05) {
-                setVisible(false);
-            } else {
-                if (direction < 0) {
-                    setVisible(true);
-                } else {
-                    setVisible(false);
-                }
-            }
+    //         if (scrollYProgress.get() < 0.05) {
+    //             setVisible(false);
+    //         } else {
+    //             if (direction < 0) {
+    //                 setVisible(true);
+    //             } else {
+    //                 setVisible(false);
+    //             }
+    //         }
+    //     }
+    // });
+
+    const isLogin = localStorage.getItem("token") ? true : false;
+
+    useEffect(() => {
+        if (!isLogin) {
+            setVisible(false);
+        } else {
+            setVisible(true);
         }
-    });
+    }, [isLogin]);
+
+    const handlelogout = () => {
+        localStorage.removeItem("token");
+        router("/");
+    };
 
     return (
         <AnimatePresence mode="wait">
@@ -63,14 +80,25 @@ export const FloatingNav = ({
                         <span className="hidden sm:block text-sm">{navItem.name}</span>
                     </a>
                 ))}
-                <Link to='/login'>
+                {isLogin === false ? (
+                    <Link to='/login'>
+                        <button
+                            className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
+                            <span>Login</span>
+                            <span
+                                className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
+                        </button>
+                    </Link>
+                ) : (
                     <button
-                        className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
-                        <span>Login</span>
+                        className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full"
+                        onClick={handlelogout}>
+                        <span>LogOut</span>
                         <span
                             className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
                     </button>
-                </Link>
+                )}
+
             </motion.div>
         </AnimatePresence>
     );
