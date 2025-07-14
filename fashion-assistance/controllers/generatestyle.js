@@ -23,6 +23,10 @@ export const generatestyle = async (req, res) => {
         if (preference) Object.assign(prompt, preference.toObject ? preference.toObject() : preference);
         if (measurement) Object.assign(prompt, measurement.toObject ? measurement.toObject() : measurement);
 
+        if(!preference && !measurement){
+            prompt.userId = req.user._id;
+        }
+
         const detailedSuggestion = await inngest.send({
             name: "fasion/suggestion",
             data: prompt

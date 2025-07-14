@@ -37,7 +37,7 @@ const analyseFashion = async (prefer) => {
                 }   
                 -----------------
                 User Preference:                     
-                -Gender: ${prefer.gender ? prefer.gender : "not mentioned"},
+                -Gender: ${prefer.gender ? prefer.gender : "for both male and female gender"},
                 -Body shape:${prefer.bodyshape ? prefer.bodyshape : "not mentioned"},
                 -Face shape:${prefer.faceshape ? prefer.faceshape : "not mentioned"}
                 -Top: ${prefer.topwear ? prefer.topwear : "not mentioned"},   

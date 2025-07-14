@@ -13,11 +13,17 @@ export const styleSuggestion = inngest.createFunction(
             const prefer = event.data
 
             const aiResponse = await analyseFashion(prefer)
-
+            
             if (!aiResponse) {
                 console.error("❌ No response from AI service")
                 return { success: false, message: "No response from AI service" }
             }
+
+            // Delete any previously generated image mapping for the user
+            await step.run("delete-previous-images", async () => {
+                const deleteResponse = await deleteGeneratedImage(prefer.userId)
+                return deleteResponse;
+            })
 
             const organisedResponse = {
                 userId: prefer.userId,
@@ -28,19 +34,13 @@ export const styleSuggestion = inngest.createFunction(
 
             // Save the generated style to the database
             await savegeneratedstyle(organisedResponse)
-
+            
             const modelstructure = {
                 bodysape: prefer.bodyShape || "any",
                 facesape: prefer.faceShape || "any",
                 skintonecolor: prefer.skintonecolor || "any",
-                gender: prefer.gender || "according to dress style",
+                gender: prefer.gender || "of both male and female gender",
             }
-
-            // Delete any previously generated image mapping for the user
-            await step.run("delete-previous-images", async () => {
-                const deleteResponse = await deleteGeneratedImage(prefer.userId)
-                return deleteResponse;
-            })
 
             //generate image for the style
             const imagebase64dataurl = await step.run("generate-image", async () => {
@@ -60,8 +60,8 @@ export const styleSuggestion = inngest.createFunction(
 
             //save image of style.
             await step.run("save-style-image", async () => {
-                const response = await saveimageofstyle(imagebase64dataurl, organisedResponse.userId)
-                
+                const response = await saveimageofstyle(imagebase64dataurl, prefer.userId)
+
                 if (!response.success) {
                     console.error("❌ Failed to save style image", response.message);
                     return { success: false, message: "Failed to save style image" };
