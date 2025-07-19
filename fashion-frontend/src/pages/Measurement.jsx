@@ -240,18 +240,31 @@ const AlertDialogForSkinToneDetection = () => {
     return (
         <AlertDialog className="mt-25">
             <AlertDialogTrigger asChild>
-                <button variant="outline" className="border-1 p-2 w-40">Analyse</button>
+                <button className="border border-gray-300 px-4 py-2 rounded-md w-40 hover:bg-gray-950">
+                    Analyse
+                </button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="p-0 w-fit h-fit max-w-none border-0 bg-transparent shadow-none">
+            <AlertDialogContent
+                className="p-0 border-0 bg-transparent shadow-none max-w-none w-auto h-auto"
+                style={{
+                    position: 'fixed', 
+                    transform: 'translate(-50%, 0%)',
+                    zIndex: 9999
+                }}
+            >
                 <AlertDialogHeader>
-                    <AlertDialogDescription>
-                        <FaceAnalysisStudio />
+                    <AlertDialogDescription asChild>
+                        <div className="flex justify-center items-center">
+                            <FaceAnalysisStudio />
+                        </div>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogAction>Continue</AlertDialogAction>
+                <AlertDialogFooter className="flex justify-center mt-4">
+                    <AlertDialogAction className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
+                        Continue
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
-}
+    );
+};
